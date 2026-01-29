@@ -1,0 +1,55 @@
+#include "ShaderProgram.h"
+#include <glm/gtc/type_ptr.hpp>
+#include "GraphicsAPI.h"
+namespace eng {
+ShaderProgram::ShaderProgram(GLuint shaderProgramId) {
+  m_ShaderProgram = shaderProgramId;
+}
+
+ShaderProgram::~ShaderProgram() {
+  glDeleteProgram(m_ShaderProgram);
+}
+void ShaderProgram::Bind() {
+  glUseProgram(m_ShaderProgram);
+  m_currentTextureUnit = 0;
+}
+GLint ShaderProgram::GetUniformLocation(const std::string& name) {
+  auto it = m_UniformLocationCache.find(name);
+  if (it != m_UniformLocationCache.end()) {
+    return it->second;
+  }
+  GLint location = glGetUniformLocation(m_ShaderProgram, name.c_str());
+  m_UniformLocationCache[name] = location;
+  return location;
+}
+void ShaderProgram::SetUniform(const std::string& name, float value) {
+  auto location = GetUniformLocation(name);
+  glUniform1f(location, value);
+}
+
+void ShaderProgram::SetUniform(const std::string& name, float v0, float v1) {
+  auto location = GetUniformLocation(name);
+  glUniform2f(location, v0, v1);
+}
+void ShaderProgram::SetUniform(const std::string& name, const glm::mat4& mat) {
+  auto location = GetUniformLocation(name);
+  glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+void ShaderProgram::SetTexture(const std::string& name, Texture* texture) {
+  auto location = GetUniformLocation(name);
+  glActiveTexture(GL_TEXTURE0 + m_currentTextureUnit);
+  glBindTexture(GL_TEXTURE_2D, texture->GetId());
+  glUniform1i(location, m_currentTextureUnit);
+  m_currentTextureUnit++;
+}
+
+void ShaderProgram::SetUniform(const std::string& name,
+                               const glm::vec3& value) {
+  auto location = GetUniformLocation(name);
+  glUniform3fv(location, 1, glm::value_ptr(value));
+}
+
+GLuint ShaderProgram::GetId() const {
+  return m_ShaderProgram;
+}
+}  // namespace eng

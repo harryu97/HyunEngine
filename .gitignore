@@ -1,0 +1,38 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran compiled modules
+*.mod
+*.smod
+
+# Executables
+*.exe
+*.out
+*.app
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+build/
+bin/
+compile_commands.json
+.cache/
